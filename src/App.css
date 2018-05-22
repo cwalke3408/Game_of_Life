@@ -1,0 +1,33 @@
+#main{
+  border: 2px blue solid;
+  /* width: 50%; */
+  text-align: center;
+}
+
+#menu{
+  border: 2px red solid;
+  height: 75px;
+  width: 280px;
+}
+
+.Board{
+  border: 2px blue solid;
+}
+
+.cellRow{
+  background: yellow;
+}
+
+#cells{
+  background-color: green;
+	display: grid;
+	grid-template-columns: repeat(70, 10px);
+	padding: 10px;
+}
+
+.cell{
+  color: black;
+  border: 1px solid #4CAF50;
+  padding: 4px;
+  text-align: center;
+}
