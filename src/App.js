@@ -1,15 +1,17 @@
 import React, { Component } from 'react';
 import './App.css';
-import Board from './Board.js'
-import Start from './Start.js'
+import Board from './Board.js';
+import Options from './Options.js';
 
 const MAX_ROW = 50;
 const MAX_COL = 70;
 
 class App extends Component {
 	constructor(props){
-		super(props);
+    super(props);
+    
 		this.state = {
+      tickCount: 0,
 			timer: "Start",
 			color: [],
 			neighCount: []
@@ -31,6 +33,13 @@ class App extends Component {
     this.handleTimerTick = this.handleTimerTick.bind(this);
 	}
   
+  handleCounterChange(e){
+    this.setState({tickCount: this.state.tickCount++});
+
+    console.log("Count Change -- ");
+    console.log(this.state.tickCount);
+  }
+
   countMyNeigh(row, col, neighMap, num, testFrom) {
 
     // update the above
@@ -63,6 +72,7 @@ class App extends Component {
 		//console.log("---------TICK----------- ")
     let neighbors = this.state.neighCount;
     let neighChanges = [];
+    let ifBoardChanged = false;
 
     for(let i=0; i<MAX_ROW; i++){
       let cols=[];
@@ -83,6 +93,7 @@ class App extends Component {
             colorTempMap[i][j]="white";
             this.setState({color: colorTempMap});
             neighChanges = this.countMyNeigh(i,j, neighChanges, -1, "fromTick");
+            ifBoardChanged = true;
           }
         }
 
@@ -93,6 +104,7 @@ class App extends Component {
           colorTempMap[i][j]="black";
           this.setState({color: colorTempMap});
           neighChanges = this.countMyNeigh(i,j, neighChanges, 1, "fromTick");
+          ifBoardChanged = true;
         } 
       }
     }
@@ -102,6 +114,9 @@ class App extends Component {
         neighbors[i][j] += neighChanges[i][j];
       }
     }
+
+    if(ifBoardChanged)
+      this.setState({tickCount: this.state.tickCount+= 1});
 
     this.setState({neighCount: neighbors});  
     // console.log("==========================");
@@ -114,6 +129,8 @@ class App extends Component {
     //   console.log(neighbors[i]);
     // }
   }
+
+
 	
 	handleColorChange(c){		
     
@@ -142,7 +159,7 @@ class App extends Component {
   }
 
   handleTimerTick(e){
-    console.log("Timer...");
+    // console.log("Timer... " + this.timerID);
     clearInterval(this.timerID);
 
     if(this.state.timer === "Start"){
@@ -151,6 +168,7 @@ class App extends Component {
         () => this.handleTickChange(),
         250
       )
+      // console.log("tht " + this.timerID);
     } else{
       this.setState({timer: "Start"});
     }
@@ -162,13 +180,15 @@ class App extends Component {
 				<Board 
 					color={this.state.color}
 					neighCount={this.state.neighCount}
-					onTickChange={this.handleTickChange}
 					onColorChange={this.handleColorChange}
 				/>
 
-        <div>
-          <Start onTimerTick={this.handleTimerTick} startButton={this.state.timer} />
-        </div>
+        <Options 
+					onTickChange={this.handleTickChange}
+          onTimerTick={this.handleTimerTick}
+          startButton={this.state.timer}
+          counter={this.state.tickCount}
+        />
 			</div>
 
 		);
