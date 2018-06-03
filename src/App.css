@@ -1,8 +1,24 @@
+html, body{
+  height: 100%;
+}
+
+#root{
+  background-color: rgb(38, 49, 49);
+  min-height: 100%;
+
+}
+
 #main{
-  border: 2px blue solid;
   text-align: center;
   background-color: rgb(38, 49, 49);
-  
+  min-height: 100%; 
+}
+
+#main h1{
+  margin: 0px;
+  padding: 20px;
+  color: whitesmoke;
+  font-family: 'Courier New', Courier, monospace;
 }
 
 #menu{
@@ -11,13 +27,7 @@
   width: 280px;
 }
 
-.Board{
-  border: 2px blue solid;
-}
 
-.cellRow{
-  background: yellow;
-}
 
 .theBoard{
   text-align: center;
@@ -42,21 +52,28 @@
   padding: 4px;
 }
 
+
 .options input{
-  width: 20px;
+  height: 25px;
+  width: 70px;
   text-align: center;
   text-align: center;
   border-radius: 4px;
   border: black 2px solid;
+  font-family: 'Courier New', Courier, monospace;
   background-color: rgb(7, 28, 29);
   color: white;
+  box-shadow: 5px 5px 5px rgb(11, 18, 19);
 }
 
 .options button{
-  width: 50px;
+  height: 30px;
+  width: 100px;
   text-align: center;
   border-radius: 4px;
   border: black 2px solid;
   background-color: rgb(7, 28, 29);
+  font-family: 'Courier New', Courier, monospace;  
   color: white;
+  box-shadow: 5px 5px 5px rgb(11, 18, 19);
 }
