@@ -17,30 +17,51 @@ class App extends Component {
 			neighCount: []
     }
 
-    for(let i=0; i<MAX_ROW; i++){
-      let cols=[];
-      let colorCols=[];
-      for(let j=0; j<MAX_COL; j++){
-        cols[j]=0;
-        colorCols[j]="white";
-      }
-      this.state.color[i]=colorCols;
-      this.state.neighCount[i]=cols;
-    }
-    
 		this.handleTickChange = this.handleTickChange.bind(this);
     this.handleColorChange = this.handleColorChange.bind(this);
     this.handleTimerTick = this.handleTimerTick.bind(this);
-	}
+  }
   
-  handleCounterChange(e){
-    this.setState({tickCount: this.state.tickCount++});
+  /** Intialize the board **/
+  componentDidMount(){
+    let tempColor = [];
+    let neighChanges = [];
 
-    console.log("Count Change -- ");
-    console.log(this.state.tickCount);
+    /* Intialize every cell neighbor count to 0 */
+    for(let i=0; i<MAX_ROW; i++){
+      let cols=[];
+      for(let j=0; j<MAX_COL; j++){
+        cols[j]=0;
+      }
+      neighChanges[i]=cols;
+    }
+
+    /* Intialize cell colors by random */
+    for(let i=0; i<MAX_ROW; i++){
+      let colorCols=[];
+
+      for(let j=0; j<MAX_COL; j++){
+        if(Math.random()*100 < 15){
+          neighChanges = this.countMyNeigh(i,j, neighChanges, 1);
+          colorCols[j]="black";
+        } else colorCols[j]="white";
+      }
+
+      tempColor[i] = colorCols;
+    }
+
+    this.setState({
+      color: tempColor,
+      neighCount: neighChanges
+    })
+  }
+  
+  handleCounterChange(){
+    let currTickCount = this.state.tickCount;
+    this.setState({tickCount: currTickCount+1});
   }
 
-  countMyNeigh(row, col, neighMap, num, testFrom) {
+  countMyNeigh(row, col, neighMap, num) {
 
     // update the above
     if(row !== MAX_ROW-1 && col !== 0) neighMap[row+1][col-1] += num;
@@ -56,20 +77,11 @@ class App extends Component {
     if(row !== 0 && col !== 0) neighMap[row-1][col-1] += num;
     if(row !== 0 ) neighMap[row-1][col] += num;
     if(row !== 0 && col !== MAX_COL-1) neighMap[row-1][col+1] += num;
-    
-    // console.log(testFrom+" >" + row + " " + col);
-    // console.log("ROWS after neigh update NUM=> " +num);
-    // for(let i=0; i<MAX_ROW; i++){
-    //   console.log(neighMap[i]+ "<==>"+ this.state.neighCount[i]);
-    //   // console.log(neighMap[i]);
-    // }
-
 
     return neighMap;    
   }
 
 	handleTickChange(tick){
-		//console.log("---------TICK----------- ")
     let neighbors = this.state.neighCount;
     let neighChanges = [];
     let ifBoardChanged = false;
@@ -92,7 +104,7 @@ class App extends Component {
             let colorTempMap  = this.state.color;
             colorTempMap[i][j]="white";
             this.setState({color: colorTempMap});
-            neighChanges = this.countMyNeigh(i,j, neighChanges, -1, "fromTick");
+            neighChanges = this.countMyNeigh(i,j, neighChanges, -1);
             ifBoardChanged = true;
           }
         }
@@ -103,7 +115,7 @@ class App extends Component {
           let colorTempMap = this.state.color;
           colorTempMap[i][j]="black";
           this.setState({color: colorTempMap});
-          neighChanges = this.countMyNeigh(i,j, neighChanges, 1, "fromTick");
+          neighChanges = this.countMyNeigh(i,j, neighChanges, 1);
           ifBoardChanged = true;
         } 
       }
@@ -115,51 +127,43 @@ class App extends Component {
       }
     }
 
-    if(ifBoardChanged)
-      this.setState({tickCount: this.state.tickCount+= 1});
+    if(ifBoardChanged){
+      let currTickCount = this.state.tickCount;
+      this.setState({tickCount: currTickCount+1});
+    }
 
     this.setState({neighCount: neighbors});  
-    // console.log("==========================");
-    // for(let i=0; i<MAX_ROW; i++){
-    //   console.log(neighChanges[i]+ "<==>"+ this.state.neighCount[i]);
-    //   // console.log(neighMap[i]);
-    // }
-    // for(let i=0; i<MAX_ROW; i++){
-    //   //console.log(this.state.neighCount[i]);
-    //   console.log(neighbors[i]);
-    // }
   }
 
 
-	
+  /***  Handles what happens when a cell changes color  ***/
+  /* Update a cell's Color and let the surrounding neighbors know of that change */
 	handleColorChange(c){		
     
     let row = c[0];
     let col = c[1];
+    let num;
+    let colorTempMap = this.state.color;
 
-    //console.log(`===> [${row}][${col}] <====`)
 		if(this.state.color[row][col] === "black"){
 			// I'm dieing
-      let colorTempMap = this.state.color;
       colorTempMap[row][col] = "white";
-			this.setState({color: colorTempMap});
-			
-			// Update Neighbor Map
-			this.setState({neighCount: this.countMyNeigh(row,col, this.state.neighCount, -1, "fromColor")});
-
+      num = -1;
 		} else {
 			// I'm being born
-      let colorTempMap = this.state.color;
       colorTempMap[row][col] = "black";
-			this.setState({color: colorTempMap});
-			
-			// Update Neigbor Map			
-			this.setState({neighCount: this.countMyNeigh(row,col, this.state.neighCount, 1, "fromColor")});
-		}
+			num = 1;
+    }
+    
+    // Update Neigbor Map
+    this.setState({
+      color: colorTempMap,
+      neighCount: this.countMyNeigh(row,col, this.state.neighCount, num)
+    });
   }
 
   handleTimerTick(e){
-    // console.log("Timer... " + this.timerID);
+    // console.log(" " + this.timerID);
     clearInterval(this.timerID);
 
     if(this.state.timer === "Start"){

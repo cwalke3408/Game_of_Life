@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import Cell from './Cell.js'
 
-class Board extends React.Component{
+class Board extends Component{
 	constructor(props){
 		super(props);
 		
@@ -26,6 +26,7 @@ class Board extends React.Component{
 			row.forEach(()=>{
 				theCells.push(
 					<Cell 
+						key={"1"+row+col}
 						row={aRow} 
                         col={col}
 						color={color}
