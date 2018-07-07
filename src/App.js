@@ -55,7 +55,7 @@ class App extends Component {
       neighCount: neighChanges
     })
   }
-  
+
   handleCounterChange(){
     let currTickCount = this.state.tickCount;
     this.setState({tickCount: currTickCount+1});
@@ -85,6 +85,7 @@ class App extends Component {
     let neighbors = this.state.neighCount;
     let neighChanges = [];
     let ifBoardChanged = false;
+    let colorTempMap = this.state.color;
 
     for(let i=0; i<MAX_ROW; i++){
       let cols=[];
@@ -101,9 +102,7 @@ class App extends Component {
         // Rule 3: Any live cell with more than three live neighbors dies, as if by overpopulation
         if(this.state.neighCount[i][j] <= 1 || this.state.neighCount[i][j] >= 4){
           if(this.state.color[i][j] === "black"){
-            let colorTempMap  = this.state.color;
             colorTempMap[i][j]="white";
-            this.setState({color: colorTempMap});
             neighChanges = this.countMyNeigh(i,j, neighChanges, -1);
             ifBoardChanged = true;
           }
@@ -112,9 +111,7 @@ class App extends Component {
         // Rule 2: Any live cell with two or three neighbors lives on to the next generation
         // Rule 4: Any dead cell with exactly three live neighbors becomes a live cell, as if by reproduction
         else if(this.state.neighCount[i][j] === 3 && this.state.color[i][j] === "white"){
-          let colorTempMap = this.state.color;
           colorTempMap[i][j]="black";
-          this.setState({color: colorTempMap});
           neighChanges = this.countMyNeigh(i,j, neighChanges, 1);
           ifBoardChanged = true;
         } 
@@ -163,16 +160,11 @@ class App extends Component {
   }
 
   handleTimerTick(e){
-    // console.log(" " + this.timerID);
     clearInterval(this.timerID);
 
     if(this.state.timer === "Start"){
       this.setState({ timer: "Pause"});
-      this.timerID = setInterval(
-        () => this.handleTickChange(),
-        250
-      )
-      // console.log("tht " + this.timerID);
+      this.timerID = setInterval(() => this.handleTickChange(), 250);
     } else{
       this.setState({timer: "Start"});
     }

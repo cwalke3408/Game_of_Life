@@ -20,20 +20,22 @@ class Board extends Component{
 		let handle = this.handleColorChange;
         let aRow = 0;
 		let col = 0;
+		let keyIndex = 0;
 		
 		this.props.neighCount.forEach((row) => {
 			col = 0;
 			row.forEach(()=>{
 				theCells.push(
 					<Cell 
-						key={"1"+row+col}
+						key={keyIndex}
 						row={aRow} 
                         col={col}
 						color={color}
 						neighCount={neighCount}
 						onColorChange = {handle}
                     />);
-                    col++;
+					col++;
+					keyIndex++;
 			});
 		    aRow++;
 		});
